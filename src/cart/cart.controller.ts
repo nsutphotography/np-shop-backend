@@ -8,8 +8,8 @@ export class CartController {
     constructor(private readonly cartService: CartService) { }
 
     @Get('get-all')
-    getCart(@Body('userId') userId: string) {
-        
+    getCart(@Req() req: any) {
+        const userId = req.user.userId; // Extract userId from JWT payload
         return this.cartService.getCart(userId);
     }
 
@@ -21,15 +21,28 @@ export class CartController {
     ) {
         const userId = req.user.userId; // Extract userId from JWT payload
         console.log('userId productId quantity in controller', userId, productId, quantity);
-    
+
         return this.cartService.addItem(userId, productId, quantity);
     }
-    
+
 
     @Delete('remove/:productId')
-    removeItem(@Body('userId') userId: string, @Param('productId') productId: string) {
+    removeItem(@Req() req: any, @Param('productId') productId: string) {
+        const userId = req.user.userId; // Extract userId from JWT payload
+        console.log('userId productId in controller', userId, productId);
         return this.cartService.removeItem(userId, productId);
     }
+    @Patch('decrease/:productId') // Match the frontend route
+    decreaseQuantity(
+        @Req() req: any, // Access request object to get userId from JWT
+        @Param('productId') productId: string, // Extract productId from route
+        @Body('quantity') quantity: number, // Get new quantity from body
+    ) {
+        const userId = req.user.userId; // Extract userId from JWT payload
+        console.log('userId productId quantity in controller', userId, productId, quantity);
+        return this.cartService.decreaseQuantity(userId, productId, quantity);
+    }
+    
 
     @Patch('clear')
     clearCart(@Body('userId') userId: string) {

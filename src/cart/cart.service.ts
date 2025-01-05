@@ -70,6 +70,34 @@ export class CartService {
         return cart.save();
     }
 
+    async decreaseQuantity(userId: string, productId: string, quantity: number): Promise<Cart> {
+        const cart = await this.cartModel.findOne({ userId });
+        if (!cart) {
+            throw new NotFoundException('Cart not found');
+        }
+    
+        // Find the product in the cart
+        const productIndex = cart.items.findIndex(
+            (item) => item.productId.toString() === productId,
+        );
+    
+        if (productIndex === -1) {
+            throw new NotFoundException('Product not found in cart');
+        }
+    
+        // Decrease the quantity, ensuring it doesn't go below zero
+        const currentQuantity = cart.items[productIndex].quantity;
+        if (currentQuantity <= quantity) {
+            // If the quantity is less than or equal to the requested decrease, remove the item
+            cart.items.splice(productIndex, 1);
+        } else {
+            // Otherwise, just decrease the quantity
+            cart.items[productIndex].quantity -= quantity;
+        }
+    
+        // Save the cart and return the updated cart
+        return cart.save();
+    }
     async clearCart(userId: string): Promise<Cart> {
         const cart = await this.cartModel.findOneAndUpdate(
             { userId },
