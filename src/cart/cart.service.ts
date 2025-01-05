@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Cart } from './schemas/cart.schema';
 import { Types } from 'mongoose';
-
+import {debug} from 'debug';
+const dbgr = debug('app:cart-service');
 @Injectable()
 export class CartService {
     constructor(
@@ -87,11 +88,14 @@ export class CartService {
     
         // Decrease the quantity, ensuring it doesn't go below zero
         const currentQuantity = cart.items[productIndex].quantity;
+        dbgr('currentQuantity and quantity', currentQuantity ,quantity);
         if (currentQuantity <= quantity) {
             // If the quantity is less than or equal to the requested decrease, remove the item
+            dbgr('cart.items[productIndex]', cart.items[productIndex]);
             cart.items.splice(productIndex, 1);
         } else {
             // Otherwise, just decrease the quantity
+            dbgr('cart.items[productIndex].quantity', cart.items[productIndex].quantity);
             cart.items[productIndex].quantity -= quantity;
         }
     
