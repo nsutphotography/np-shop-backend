@@ -16,6 +16,8 @@ export class CartService {
         if (!cart) {
             throw new NotFoundException('Cart not found');
         }
+        console.log("here cart servive")
+        dbgr("cart from getCart",cart)
         return cart;
     }
 
@@ -55,7 +57,8 @@ export class CartService {
         }
     
         // Save the cart and return the updated cart
-        return cart.save();
+        cart.save();
+        return this.cartModel.findOne({ userId }).populate('items.productId');
     }
     
 
