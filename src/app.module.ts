@@ -1,6 +1,26 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ProductsModule } from './products/products.module';
+import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './db/database.module';
+import { CartModule } from './cart/cart.module';
+import { UserModule } from './user/user.module';
+import { AddressModule } from './address/address.module';
+
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes it globally accessible
+    }),
+    DatabaseModule,
+
+    ProductsModule,
+    // AuthModule,
+    CartModule,
+    UserModule,
+    AddressModule,
+  ],
 })
-export class AppModule {}
+export class AppModule { }
