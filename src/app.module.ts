@@ -8,9 +8,12 @@ import { CartModule } from './cart/cart.module';
 import { UserModule } from './user/user.module';
 import { AddressModule } from './address/address.module';
 
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes it globally accessible
+    }),
     DatabaseModule,
 
     ProductsModule,

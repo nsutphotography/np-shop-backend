@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { Cart } from './schemas/cart.schema';
 import { Types } from 'mongoose';
 import {debug} from 'debug';
-const dbgr = debug('app:cart-service');
+const log = debug('app:cart-service');
 @Injectable()
 export class CartService {
     constructor(
@@ -17,19 +17,17 @@ export class CartService {
             throw new NotFoundException('Cart not found');
         }
         console.log("here cart servive")
-        dbgr("cart from getCart",cart)
+        log("cart from getCart",cart)
         return cart;
     }
 
     
-    async addItem(userId: string, productId: string, quantity: number): Promise<Cart> {
-        // Validate if quantity is positive
-        console.log('userId, productId, quantity in service', userId, productId, quantity);
+    async addItem(userId: string,userEmail:string, productId: string, quantity: number): Promise<Cart> {
+        log('userId, productId, quantity in service', userId, productId, quantity);
         if (quantity <= 0) {
             throw new BadRequestException('Quantity must be greater than 0');
         }
     
-        // Check if productId is a valid ObjectId
         if (!Types.ObjectId.isValid(productId)) {
             throw new BadRequestException('Invalid productId');
         }
@@ -39,8 +37,8 @@ export class CartService {
         let cart = await this.cartModel.findOne({ userId });
         if (!cart) {
             // Create a new cart if none exists for the user
-            cart = new this.cartModel({ userId, items: [] });
-            console.log('Cart for new user created');
+            cart = new this.cartModel({ userId,userEmail, items: [] });
+            log('Cart for new user created with email',userEmail);
         }
     
         // Check if the item already exists in the cart
@@ -91,14 +89,14 @@ export class CartService {
     
         // Decrease the quantity, ensuring it doesn't go below zero
         const currentQuantity = cart.items[productIndex].quantity;
-        dbgr('currentQuantity and quantity', currentQuantity ,quantity);
+        log('currentQuantity and quantity', currentQuantity ,quantity);
         if (currentQuantity <= quantity) {
             // If the quantity is less than or equal to the requested decrease, remove the item
-            dbgr('cart.items[productIndex]', cart.items[productIndex]);
+            log('cart.items[productIndex]', cart.items[productIndex]);
             cart.items.splice(productIndex, 1);
         } else {
             // Otherwise, just decrease the quantity
-            dbgr('cart.items[productIndex].quantity', cart.items[productIndex].quantity);
+            log('cart.items[productIndex].quantity', cart.items[productIndex].quantity);
             cart.items[productIndex].quantity -= quantity;
         }
     

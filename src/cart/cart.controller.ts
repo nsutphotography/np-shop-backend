@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Delete, Body, Param, Patch, UseGuards, Req } from '@nestjs/common';
 import { JwtAuthGuard } from '../utils/jwt.guard';
 import { CartService } from './cart.service';
-
+import debugLib from 'debug'
+const log = debugLib('app:cart controller')
 @Controller('cart')
 @UseGuards(JwtAuthGuard) // Ensure only authenticated users access the cart
 export class CartController {
@@ -20,9 +21,9 @@ export class CartController {
         @Body('quantity') quantity: number,
     ) {
         const userId = req.user.userId; // Extract userId from JWT payload
-        console.log('userId productId quantity in controller', userId, productId, quantity);
-
-        return this.cartService.addItem(userId, productId, quantity);
+        const userEmail = req.user.email
+        log("user in the request",req.user)
+        return this.cartService.addItem(userId,userEmail, productId, quantity);
     }
 
 
