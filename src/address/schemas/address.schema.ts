@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { Types } from 'mongoose';
-import { User } from 'src/user/schemas/user.schema';
+import { Document, Types } from 'mongoose';
 import * as dotenv from 'dotenv';
 import debugLib from 'debug';
 const log = debugLib('app:address:schema');
@@ -28,7 +26,8 @@ export class Address extends Document {
       country: { type: String, required: true },
       postalCode: { type: String, required: true },
       isDefault: { type: Boolean, default: false }, // Indicates if this is the default address
-      label: {type: String,},
+      label: { type: String },
+      _id: { type: Types.ObjectId, auto: true }, // Explicitly add _id for each address in the array
     },
   ])
   addresses: Array<{
@@ -39,9 +38,11 @@ export class Address extends Document {
     postalCode: string;
     isDefault?: boolean;
     label: string;
+    _id: Types.ObjectId; // Include _id in TypeScript type
   }>;
 }
 
+// Create schema for Address class
 export const AddressSchema = SchemaFactory.createForClass(Address);
 
 // Remove userEmail field in production

@@ -19,7 +19,7 @@ export class AddressController {
     const userEmail = req.user.email; // Extract userId from JWT payload
     log('Creating address for user ID: %s', userId); // Log user ID during address creation
     log("add address - address data", createAddressDto)
-    return this.addressService.add(userId,userEmail ,{ ...createAddressDto });
+    return this.addressService.add(userId, userEmail, { ...createAddressDto });
   }
 
   @Get('get-all')
@@ -43,6 +43,24 @@ export class AddressController {
     return this.addressService.update(id, { ...updateAddressDto, userId });
   }
 
+  @Patch('update-default/:addressId')
+  async updateDefaultAddress(
+    @Param('addressId') addressId: string, // Extract addressId from the URL
+    @Req() req: any, // Extract user data from the request
+  ) {
+    const userId = req.user.userId; // Get userId from the JWT payload
+  
+    log('Request to update default address for userId:', userId, 'addressId:', addressId);
+  
+    try {
+      const updatedAddressDoc = await this.addressService.updateDefault(userId, addressId);
+      return { message: 'Default address updated successfully', data: updatedAddressDoc };
+    } catch (error) {
+      log('Error updating default address:', error.message);
+      throw new Error(error.message);
+    }
+  }
+  
   // @Delete(':id')
   // async delete(@Param('id') id: string, @Req() req: any) {
   //   const userId = req.user.userId; // Ensure the user is authorized to delete
