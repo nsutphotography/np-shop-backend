@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsBoolean, IsOptional, IsEnum } from 'class-validator';
 
 export class CreateAddressDto {
   @IsNotEmpty()
@@ -28,4 +28,10 @@ export class CreateAddressDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  @IsNotEmpty()
+  @IsEnum(['Home', 'Work', 'Hotel', 'Other'], {
+    message: 'label must be one of: Home, Work, Hotel, Other',
+  })
+  label: 'Home' | 'Work' | 'Hotel' | 'Other';
 }

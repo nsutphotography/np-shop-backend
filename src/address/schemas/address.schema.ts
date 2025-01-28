@@ -3,14 +3,14 @@ import { Document } from 'mongoose';
 import { Types } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import * as dotenv from 'dotenv';
-import debugLib from 'debug'
-const log = debugLib('app:address:schema')
+import debugLib from 'debug';
+const log = debugLib('app:address:schema');
 
 // Load environment variables
 dotenv.config();
 
 const isDevelopment = process.env.NODE_ENV === 'development';
-log("node env development or not",isDevelopment)
+log('node env development or not', isDevelopment);
 
 @Schema()
 export class Address extends Document {
@@ -28,6 +28,11 @@ export class Address extends Document {
       country: { type: String, required: true },
       postalCode: { type: String, required: true },
       isDefault: { type: Boolean, default: false }, // Indicates if this is the default address
+      label: {
+        type: String,
+        required: true,
+        enum: ['Home', 'Work', 'Hotel', 'Other'], // Allow only specific values
+      }, // Address label
     },
   ])
   addresses: Array<{
@@ -37,6 +42,7 @@ export class Address extends Document {
     country: string;
     postalCode: string;
     isDefault?: boolean;
+    label: 'Home' | 'Work' | 'Hotel' | 'Other';
   }>;
 }
 

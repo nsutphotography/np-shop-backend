@@ -12,7 +12,7 @@ export class AddressService {
     @InjectModel(Address.name) private readonly addressModel: Model<Address>,
   ) { }
 
-  async create(userId: string, userEmail: string, createAddressDto: CreateAddressDto): Promise<Address> {
+  async add(userId: string, userEmail: string, createAddressDto: CreateAddressDto): Promise<Address> {
     log("create address - userId:", userId, "userEmail:", userEmail, "createAddressDto:", createAddressDto);
   
     // Check if an address document exists for the user
@@ -27,8 +27,12 @@ export class AddressService {
       log("New address document created for user with email:", userEmail);
     }
   
-    // Handle `isDefault` logic
-    if (createAddressDto.isDefault) {
+    // If this is the first address being added, set isDefault to true
+    const isFirstAddress = addressDoc.addresses.length === 0;
+    const isDefault = isFirstAddress ? true : createAddressDto.isDefault || false;
+  
+    // Handle `isDefault` logic for subsequent addresses
+    if (isDefault && !isFirstAddress) {
       // Ensure no other address is marked as default
       addressDoc.addresses.forEach((address) => (address.isDefault = false));
     }
@@ -40,7 +44,8 @@ export class AddressService {
       state: createAddressDto.state,
       country: createAddressDto.country,
       postalCode: createAddressDto.postalCode,
-      isDefault: createAddressDto.isDefault || false, // Default to false if not specified
+      isDefault,
+      label: createAddressDto.label,
     });
   
     // Save the updated document

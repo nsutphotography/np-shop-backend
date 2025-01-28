@@ -19,7 +19,7 @@ export class AddressController {
     const userEmail = req.user.email; // Extract userId from JWT payload
     log('Creating address for user ID: %s', userId); // Log user ID during address creation
     log("add address - address data", createAddressDto)
-    return this.addressService.create(userId,userEmail ,{ ...createAddressDto });
+    return this.addressService.add(userId,userEmail ,{ ...createAddressDto });
   }
 
   @Get('get-all')
