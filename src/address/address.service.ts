@@ -5,21 +5,60 @@ import { Address } from './schemas/address.schema';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import debug from 'debug'; // Import debug
-const dbgr = debug('app:address-service');
+const log = debug('app:address-service');
 @Injectable()
 export class AddressService {
   constructor(
     @InjectModel(Address.name) private readonly addressModel: Model<Address>,
   ) { }
 
-  async create(createAddressDto: CreateAddressDto): Promise<Address> {
-    return await this.addressModel.create(createAddressDto);
+  async add(userId: string, userEmail: string, createAddressDto: CreateAddressDto): Promise<Address> {
+    log("create address - userId:", userId, "userEmail:", userEmail, "createAddressDto:", createAddressDto);
+
+    // Check if an address document exists for the user
+    let addressDoc = await this.addressModel.findOne({ userId });
+    if (!addressDoc) {
+      // Create a new address document if none exists for the user
+      addressDoc = new this.addressModel({
+        userId,
+        userEmail,
+        addresses: [],
+      });
+      log("New address document created for user with email:", userEmail);
+    }
+
+    // If this is the first address being added, set isDefault to true
+    const isFirstAddress = addressDoc.addresses.length === 0;
+    const isDefault = isFirstAddress ? true : createAddressDto.isDefault || false;
+
+    // Handle `isDefault` logic for subsequent addresses
+    if (isDefault && !isFirstAddress) {
+      // Ensure no other address is marked as default
+      addressDoc.addresses.forEach((address) => (address.isDefault = false));
+    }
+
+    // Add the new address to the array
+    addressDoc.addresses.push({
+      street: createAddressDto.street,
+      city: createAddressDto.city,
+      state: createAddressDto.state,
+      country: createAddressDto.country,
+      postalCode: createAddressDto.postalCode,
+      isDefault,
+      label: createAddressDto.label,
+    } as any); // Use `as any` to bypass strict typing on `_id`
+  
+    // Save the updated document
+    await addressDoc.save();
+
+    return this.addressModel.findOne({ userId }).exec();
   }
 
+
   async findByUserId(userId): Promise<Address[]> {
-    dbgr('find by user id function 1 ', userId); // Log user ID during address fetch
+    log('find by user id function 1 ', userId); // Log user ID during address fetch
     const addresses = await this.addressModel.find({ userId }).exec(); // Store the result
-    dbgr('addresses', addresses); // Log the stored result
+    log('addresses', addresses); // Log the stored result
     return addresses; // Return the stored result
   }
 
@@ -45,4 +84,35 @@ export class AddressService {
       throw new NotFoundException('Address not found');
     }
   }
+  async updateDefault(userId: string, addressId: string): Promise<Address> {
+    log("Updating default address for userId:", userId, "addressId:", addressId);
+
+    // Fetch the user's address document
+    const addressDoc = await this.addressModel.findOne({ userId });
+    if (!addressDoc) {
+      throw new Error("Address document not found for the user");
+    }
+    // let a = addressDoc.addresses[0].
+    // Ensure the provided address exists in the user's address list
+    const addressExists = addressDoc.addresses.some(
+      (address) => address._id.toString() === addressId
+    );
+
+    if (!addressExists) {
+      throw new Error("Address not found");
+    }
+
+    // Update `isDefault` for all addresses
+    addressDoc.addresses.forEach((address) => {
+      address.isDefault = address._id.toString() === addressId;
+    });
+
+    // Save the updated document
+    await addressDoc.save();
+
+    log("Default address updated for userId:", userId, "new default addressId:", addressId);
+
+    return addressDoc;
+  }
+
 }

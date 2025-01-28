@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsBoolean, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsBoolean, IsOptional, IsEnum } from 'class-validator';
 
 export class CreateAddressDto {
   @IsNotEmpty()
@@ -28,4 +28,8 @@ export class CreateAddressDto {
   @IsOptional()
   @IsBoolean()
   isDefault?: boolean;
+
+  @IsNotEmpty()
+  @IsString() // Allows any string value
+  label: string;
 }
