@@ -30,8 +30,6 @@ export class CreateAddressDto {
   isDefault?: boolean;
 
   @IsNotEmpty()
-  @IsEnum(['Home', 'Work', 'Hotel', 'Other'], {
-    message: 'label must be one of: Home, Work, Hotel, Other',
-  })
-  label: 'Home' | 'Work' | 'Hotel' | 'Other';
+  @IsString() // Allows any string value
+  label: string;
 }

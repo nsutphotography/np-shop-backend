@@ -28,11 +28,7 @@ export class Address extends Document {
       country: { type: String, required: true },
       postalCode: { type: String, required: true },
       isDefault: { type: Boolean, default: false }, // Indicates if this is the default address
-      label: {
-        type: String,
-        required: true,
-        enum: ['Home', 'Work', 'Hotel', 'Other'], // Allow only specific values
-      }, // Address label
+      label: {type: String,},
     },
   ])
   addresses: Array<{
@@ -42,7 +38,7 @@ export class Address extends Document {
     country: string;
     postalCode: string;
     isDefault?: boolean;
-    label: 'Home' | 'Work' | 'Hotel' | 'Other';
+    label: string;
   }>;
 }
 
