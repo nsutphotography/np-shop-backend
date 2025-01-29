@@ -32,7 +32,7 @@ async createPaymentIntent(
     };
 
     const paymentIntent = await this.stripeService.createPaymentIntent({
-      amount,
+      amount: Math.round(amount * 100),
       currency: 'usd',
       metadata,
     });
