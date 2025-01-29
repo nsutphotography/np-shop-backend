@@ -7,6 +7,7 @@ import { DatabaseModule } from './db/database.module';
 import { CartModule } from './cart/cart.module';
 import { UserModule } from './user/user.module';
 import { AddressModule } from './address/address.module';
+import { StripeModule } from './stripe/stripe.module';
 
 
 @Module({
@@ -14,6 +15,7 @@ import { AddressModule } from './address/address.module';
     ConfigModule.forRoot({
       isGlobal: true, // Makes it globally accessible
     }),
+    StripeModule,
     DatabaseModule,
 
     ProductsModule,
