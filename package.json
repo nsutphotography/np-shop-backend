@@ -11,6 +11,7 @@
     "build": "nest build",
     "start": "node dist/main.js",
     "start:production": "npm run build && node --max-old-space-size=512 dist/main.js",
+    "start:size": "npm run build && node --max-old-space-size=2048 dist/main.js",
     "start:dev": "nest start --watch",
     "start:dbgr": "DEBUG=app:user-controller nest start --watch",
     "start:debug": "nest start --debug --watch",
