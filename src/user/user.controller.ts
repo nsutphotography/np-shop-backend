@@ -1,17 +1,20 @@
 import { Controller, Post, Body, Get, Request, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/utils/jwt.guard';
-import debug from 'debug';
+// import debug from 'debug';
+import log from '../debugging/debug'
 
 // Set up the dbgr logger (using the namespace 'app:user-controller')
-const log = debug('app:user-controller');
-
+// const log = debug('app:user-controller');
+log("test sing log")
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post('signup')
   async signUp(@Body('email') email: string, @Body('password') password: string) {
+    console.log("hihhihihihihihihih")
+    log(email)
     log('Sign Up Request received with email: %s', email); // Log signup action
     return this.userService.signUp(email, password);
   }
