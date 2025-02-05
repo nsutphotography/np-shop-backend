@@ -31,8 +31,12 @@ const enhancedLog = (message: string, ...args: any[]) => {
     const callerFileName = match[2];      // File path
 
     // Color the message (for example, color the function name in blue)
-    const coloredMessage = `${colors.cyan}[${path.basename(callerFileName)}:${callerFunctionName}]${colors.reset} ${message}`;
-    log(coloredMessage, ...args);
+    const coloredMessage = `${colors.yellow}[${path.basename(callerFileName)}:${callerFunctionName}]${colors.reset} ${colors.red}${message}${colors.reset}`;
+
+    // Color the args (for example, color the email in green)
+    const coloredArgs = args.map(arg => `${colors.green}${arg}${colors.reset}`);
+
+    log(coloredMessage, ...coloredArgs);
   } else {
     log(`[Unknown file:Unknown function] ${message}`, ...args);  // Fallback if parsing fails
   }
