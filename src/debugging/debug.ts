@@ -6,6 +6,8 @@ const log = debug('app:general');
 
 // ANSI escape codes for colors
 const colors = {
+  bold: '\x1b[1m', // Bold text
+
   reset: '\x1b[0m',
   red: '\x1b[31m',
   green: '\x1b[32m',
@@ -31,7 +33,7 @@ const enhancedLog = (message: string, ...args: any[]) => {
     const callerFileName = match[2];      // File path
 
     // Color the message (for example, color the function name in blue)
-    const coloredMessage = `${colors.yellow}[${path.basename(callerFileName)}:${callerFunctionName}]${colors.reset} ${colors.red}${message}${colors.reset}`;
+    const coloredMessage = `${colors.yellow}[${path.basename(callerFileName)}:${callerFunctionName}]${colors.reset} ${colors.bold}${colors.red}${message}${colors.reset}`;
 
     // Color the args (for example, color the email in green)
     const coloredArgs = args.map(arg => `${colors.green}${arg}${colors.reset}`);
