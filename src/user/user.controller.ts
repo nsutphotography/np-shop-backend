@@ -14,6 +14,7 @@ export class UserController {
   @Post('signup')
   async signUp(@Body('email') email: string, @Body('password') password: string) {
     console.log("hihhihihihihihihih")
+    log(email)
     log('Sign Up Request received with email: %s', email); // Log signup action
     return this.userService.signUp(email, password);
   }
