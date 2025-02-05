@@ -1,38 +1,60 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
+import log from '../debugging/debug';
 
 @Injectable()
 export class AuthGoogleService {
-  private client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  private client = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URI
+  );
 
-  constructor(private jwtService: JwtService) {}
-
-  async validateGoogleToken(token: string) {
+  async validateGoogleToken(code: string) {
     try {
-      // Verify Google token
+      log("Exchanging auth code for ID token...");
+      log( "here",process.env.GOOGLE_CLIENT_ID,process.env.GOOGLE_CLIENT_SECRET,process.env.GOOGLE_REDIRECT_URI)
+
+      // Exchange auth code for tokens
+      const { tokens } = await this.client.getToken(code);
+      log("Received tokens: ", tokens);
+
+      if (!tokens.id_token) {
+        log("No ID token found in the response");
+        throw new UnauthorizedException('Failed to get ID token');
+      }
+
+      log("ID token successfully received: ", tokens.id_token);
+
+      // Verify ID token
+      log("Verifying Google ID token...");
       const ticket = await this.client.verifyIdToken({
-        idToken: token,
+        idToken: tokens.id_token,
         audience: process.env.GOOGLE_CLIENT_ID,
       });
 
+      log("ID token verification successful");
+
       const payload = ticket.getPayload();
-      if (!payload) throw new UnauthorizedException('Invalid Google token');
+      log("Token payload: ", payload);
 
-      // Extract user details
-      const { email, name, picture, sub } = payload;
+      if (!payload) {
+        log("Invalid Google token payload received");
+        throw new UnauthorizedException('Invalid Google token');
+      }
 
-      // Here, check if the user exists in the database
-      // If not, create a new user entry
-      // (Assume we have a `UserService` to handle database operations)
+      // Extract email
+      const { email } = payload;
+      log("User email extracted from token payload: ", email);
 
-      const user = { id: sub, email, name, picture }; // Mock user data
-
-      // Generate JWT token
-      const jwtToken = this.jwtService.sign({ id: user.id, email: user.email });
-
-      return { user, token: jwtToken };
+      return { email };
     } catch (error) {
+      log("Error during Google token verification: ", error);
+      if (error instanceof UnauthorizedException) {
+        log("Unauthorized exception: ", error.message);
+      } else {
+        log("Unexpected error: ", error.message);
+      }
       throw new UnauthorizedException('Invalid Google token');
     }
   }

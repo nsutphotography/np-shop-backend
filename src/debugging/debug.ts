@@ -19,7 +19,7 @@ const colors = {
 };
 
 // Enhanced log function to capture file and function names
-const enhancedLog = (message: string, ...args: any[]) => {
+const enhancedLog = (message: any, ...args: any[]) => {
   // Capture the stack trace to extract the caller's file and function name
   const stack = new Error().stack;
   const stackLines = stack?.split('\n') || [];
