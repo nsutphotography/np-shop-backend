@@ -14,7 +14,7 @@ export class AuthGoogleService {
     try {
       log("Exchanging auth code for ID token...");
       log("GOOGLE_CLIENT_ID: ", process.env.GOOGLE_CLIENT_ID);
-log("GOOGLE_REDIRECT_URI: ", process.env.GOOGLE_REDIRECT_URI);
+      log("GOOGLE_REDIRECT_URI: ", process.env.GOOGLE_REDIRECT_URI);
 
       // Exchange auth code for tokens
       const { tokens } = await this.client.getToken({
@@ -54,7 +54,7 @@ log("GOOGLE_REDIRECT_URI: ", process.env.GOOGLE_REDIRECT_URI);
 
       return { email };
     } catch (error) {
-      log("Error during Google token verification: ",error);
+      log("Error during Google token verification: ", error);
       if (error instanceof UnauthorizedException) {
         log("Unauthorized exception: ", error.message);
       } else {
