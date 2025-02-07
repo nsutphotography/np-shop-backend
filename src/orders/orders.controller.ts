@@ -15,6 +15,7 @@ export class OrdersController {
         const userId = req.user.userId; // Extract userId from JWT payload
         const userEmail = req.user.email;
         log("orders add", body.userId, body.items, body.totalPrice, body.shippingAddress)
+        
         return this.ordersService.createOrder(userId, userEmail, body.items, body.totalPrice, body.shippingAddress);
     }
 
