@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { AddressModule } from './address/address.module';
 import { StripeModule } from './stripe/stripe.module';
 import { AuthGoogleModule } from './auth-google/auth-google.module';
+import { OrdersModule } from './orders/orders.module';
 
 
 @Module({
@@ -25,6 +26,7 @@ import { AuthGoogleModule } from './auth-google/auth-google.module';
     UserModule,
     AddressModule,
     AuthGoogleModule,
+    OrdersModule,
   ],
 })
 export class AppModule { }
