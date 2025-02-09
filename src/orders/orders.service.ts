@@ -5,11 +5,14 @@ import { Order, OrderDocument } from './schema/order.schema';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) {}
+  constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) { }
 
-  async createOrder(userId: string,email:string, items: { productId: string; quantity: number }[], totalPrice: number, shippingAddress: string) {
-    const newOrder = new this.orderModel({ userId,email, items, totalPrice, shippingAddress });
+  async createOrder(userId: string, email: string, items: { productId: string; quantity: number }[], totalPrice: number, shippingAddress: string) {
+    const newOrder = new this.orderModel({ userId, email, items, totalPrice, shippingAddress });
     return newOrder.save();
+  }
+  async getAllOrders(userId: string) {
+    return this.orderModel.find({ userId });
   }
 
   async getOrdersByUser(userId: string) {

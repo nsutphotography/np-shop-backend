@@ -15,8 +15,16 @@ export class OrdersController {
         const userId = req.user.userId; // Extract userId from JWT payload
         const userEmail = req.user.email;
         log("orders add", body.userId, body.items, body.totalPrice, body.shippingAddress)
-        
+
         return this.ordersService.createOrder(userId, userEmail, body.items, body.totalPrice, body.shippingAddress);
+    }
+    @UseGuards(JwtAuthGuard)
+    @Get('get-all')
+    async getAllOrders(@Req() req: any) {
+        const userId = req.user.userId; // Extract userId from JWT payload
+        log("reques for all orders for user",userId)
+        console.log("reques for all orders for user",userId)
+        return this.ordersService.getAllOrders(userId);
     }
 
     @UseGuards(JwtAuthGuard)
