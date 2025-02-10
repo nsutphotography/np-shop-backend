@@ -8,14 +8,19 @@ export class Order {
   @Prop({ type: SchemaTypes.ObjectId, ref: 'User', required: true })
   userId: MongooseSchema.Types.ObjectId; // Reference to User model
 
-  @Prop({ 
+  @Prop({
     required: process.env.NODE_ENV === 'development' // Only required in development mode
   })
   email?: string;
 
   @Prop({
     required: true,
-    type: [{ productId: SchemaTypes.ObjectId, quantity: Number }]
+    type: [
+      {
+        productId: { type: MongooseSchema.Types.ObjectId, ref: 'Product', required: true },
+        quantity: Number
+      }
+    ]
   })
   items: { productId: MongooseSchema.Types.ObjectId; quantity: number }[];
 

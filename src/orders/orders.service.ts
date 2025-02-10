@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Order, OrderDocument } from './schema/order.schema';
-
+import log from '../debugging/debug'
 @Injectable()
 export class OrdersService {
   constructor(@InjectModel(Order.name) private orderModel: Model<OrderDocument>) { }
@@ -11,9 +11,12 @@ export class OrdersService {
     const newOrder = new this.orderModel({ userId, email, items, totalPrice, shippingAddress });
     return newOrder.save();
   }
+
   async getAllOrders(userId: string) {
-    return this.orderModel.find({ userId });
-  }
+    const orders = await this.orderModel.find({ userId }).populate("items.productId");
+    log("Fetched Orders:", JSON.stringify(orders, null, 2)); // Pretty print for readability
+    return orders;
+}
 
   async getOrdersByUser(userId: string) {
     return this.orderModel.find({ userId }).sort({ createdAt: -1 }).exec();
