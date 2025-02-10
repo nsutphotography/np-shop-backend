@@ -36,6 +36,7 @@ async function bootstrap() {
 
   // Enable CORS with the chosen options
   app.enableCors(corsOptions);
+  log(allowedOrigins)
   // Use your custom middleware
   app.use(new PassportLoggerMiddleware().use);
 

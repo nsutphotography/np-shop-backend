@@ -13,9 +13,15 @@ export class AuthGoogleService {
   async validateGoogleToken(code: string) {
     try {
       log("Exchanging auth code for ID token...");
+      log("GOOGLE_CLIENT_ID: ", process.env.GOOGLE_CLIENT_ID);
+      log("GOOGLE_REDIRECT_URI: ", process.env.GOOGLE_REDIRECT_URI);
 
       // Exchange auth code for tokens
-      const { tokens } = await this.client.getToken(code);
+      const { tokens } = await this.client.getToken({
+        code,
+        redirect_uri: process.env.GOOGLE_REDIRECT_URI, // Explicitly set it
+
+      });
       log("Received tokens: ", tokens);
 
       if (!tokens.id_token) {
@@ -48,7 +54,7 @@ export class AuthGoogleService {
 
       return { email };
     } catch (error) {
-      log("Error during Google token verification: ",error);
+      log("Error during Google token verification: ", error);
       if (error instanceof UnauthorizedException) {
         log("Unauthorized exception: ", error.message);
       } else {
