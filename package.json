@@ -10,7 +10,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "build": "nest build",
     "start": "node dist/main.js",
-    "start:production": "npm run build && node --max-old-space-size=512 dist/main.js",
+    "start:production": "node --max-old-space-size=1024 dist/main.js",
     "start:size": "npm run build && node --max-old-space-size=4096 dist/main.js",
     "start:dev": "nest start --watch",
     "start:dbgr": "DEBUG=app:user-controller nest start --watch",
