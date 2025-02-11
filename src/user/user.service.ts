@@ -41,19 +41,28 @@ async login(email: string, password: string) {
   const payload = { _id: user._id, email: user.email };
   const token = this.jwtService.sign(payload);
   console.log('JWT Token Generated:', token); // Log generated token
-  
-  return { token };
+
+  // Convert user document to an object and remove the password field
+  const { password: _, ...userWithoutPassword } = user.toObject();
+  // console.log("user data sending to the frontend",userWithoutPassword)
+  log("user data sending to the frontend",userWithoutPassword)
+
+  return { 
+    token, 
+    user: userWithoutPassword
+  };
 }
 
+
+
 async getProfile(userId: string) {
-  const user = await this.userModel.findById(userId);
+  const user = await this.userModel.findById(userId).select("-password"); // Exclude password field
+
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
-  return {
-    email: user.email,
-    // You can add more user details here as needed
-  };
+
+  return {user}; 
 }
 
 }
