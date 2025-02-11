@@ -56,14 +56,13 @@ async login(email: string, password: string) {
 
 
 async getProfile(userId: string) {
-  const user = await this.userModel.findById(userId);
+  const user = await this.userModel.findById(userId).select("-password"); // Exclude password field
+
   if (!user) {
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
-  return {
-    email: user.email,
-    // You can add more user details here as needed
-  };
+
+  return {user}; 
 }
 
 }
