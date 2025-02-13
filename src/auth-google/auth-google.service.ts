@@ -13,7 +13,6 @@ export class AuthGoogleService {
   async validateGoogleToken(code: string) {
     try {
       log("Exchanging auth code for ID token...");
-      log("GOOGLE_CLIENT_ID: ", process.env.GOOGLE_CLIENT_ID);
       log("GOOGLE_REDIRECT_URI: ", process.env.GOOGLE_REDIRECT_URI);
 
       // Exchange auth code for tokens
