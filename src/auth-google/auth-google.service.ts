@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
+import * as jwt from 'jsonwebtoken';
 import log from '../debugging/debug';
 
 @Injectable()
@@ -18,8 +19,7 @@ export class AuthGoogleService {
       // Exchange auth code for tokens
       const { tokens } = await this.client.getToken({
         code,
-        redirect_uri: process.env.GOOGLE_REDIRECT_URI, // Explicitly set it
-
+        redirect_uri: process.env.GOOGLE_REDIRECT_URI,
       });
       log("Received tokens: ", tokens);
 
@@ -41,24 +41,28 @@ export class AuthGoogleService {
 
       const payload = ticket.getPayload();
       log("Token payload: ", payload);
+      console.log("Token payload: ", payload);
 
       if (!payload) {
         log("Invalid Google token payload received");
         throw new UnauthorizedException('Invalid Google token');
       }
 
-      // Extract email
-      const { email } = payload;
-      log("User  email extracted from token payload: ", email);
+      // Extract user information
+      const { email, sub } = payload;
+      log("User email extracted from token payload: ", email);
 
-      return { email };
+      // Generate JWT token
+      const jwtToken = jwt.sign(
+        { email, sub },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' } // Set expiration as needed
+      );
+      log("JWT token generated successfully");
+
+      return { email, token: jwtToken };
     } catch (error) {
       log("Error during Google token verification: ", error);
-      if (error instanceof UnauthorizedException) {
-        log("Unauthorized exception: ", error.message);
-      } else {
-        log("Unexpected error: ", error.message);
-      }
       throw new UnauthorizedException('Invalid Google token');
     }
   }
