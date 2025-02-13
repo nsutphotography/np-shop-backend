@@ -12,7 +12,7 @@ export class User extends Document {
   @Prop({ required: false, unique: true, sparse: true }) // Only for Google login
   googleId?: string;
 
-  @Prop({ required: true }) // Name is required for all users
+  @Prop({ required: false }) // Name is required for all users
   name: string;
 
   @Prop({ required: false }) // Optional profile image
