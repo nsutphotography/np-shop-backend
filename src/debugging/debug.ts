@@ -33,7 +33,7 @@ const enhancedLog = (message: any, ...args: any[]) => {
     const callerFileName = match[2];      // File path
 
     // Color the message (for example, color the function name in blue)
-    const coloredMessage = `${colors.yellow}[${path.basename(callerFileName)}:${callerFunctionName}]${colors.reset} ${colors.bold}${colors.red}${message}${colors.reset}`;
+    const coloredMessage = `${colors.green}[${path.basename(callerFileName)}:${callerFunctionName}]${colors.reset}${colors.yellow}${message}${colors.reset}`;
 
     // Color the args (for example, color the email in green)
     const coloredArgs = args.map(arg => `${colors.green}${arg}${colors.reset}`);

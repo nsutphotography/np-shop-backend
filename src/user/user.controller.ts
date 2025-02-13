@@ -11,19 +11,19 @@ log("test sing log")
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post('signup')
-  async signUp(@Body('email') email: string, @Body('password') password: string) {
-    console.log("hihhihihihihihihih")
-    log(email)
-    log('Sign Up Request received with email: %s', email); // Log signup action
-    return this.userService.signUp(email, password);
-  }
+  // @Post('signup')
+  // async signUp(@Body('email') email: string, @Body('password') password: string) {
+  //   console.log("hihhihihihihihihih")
+  //   log(email)
+  //   log('Sign Up Request received with email: %s', email); // Log signup action
+  //   return this.userService.signUp(email, password);
+  // }
 
-  @Post('login')
-  async login(@Body('email') email: string, @Body('password') password: string) {
-    log('Login Request received with email: %s', email); // Log login action
-    return this.userService.login(email, password);
-  }
+  // @Post('login')
+  // async login(@Body('email') email: string, @Body('password') password: string) {
+  //   log('Login Request received with email: %s', email); // Log login action
+  //   return this.userService.login(email, password);
+  // }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
