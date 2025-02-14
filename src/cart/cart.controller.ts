@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Delete, Body, Param, Patch, UseGuards, Req } from '@nestjs/common';
 import { JwtAuthGuard } from '../utils/jwt.guard';
 import { CartService } from './cart.service';
-import debugLib from 'debug'
-const log = debugLib('app:cart controller')
+import log from "../debugging/debug"
 @Controller('cart')
 @UseGuards(JwtAuthGuard) // Ensure only authenticated users access the cart
 export class CartController {

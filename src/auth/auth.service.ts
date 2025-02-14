@@ -102,7 +102,7 @@ export class AuthService {
         await user.save();
       }
 
-      const token = this.jwtService.sign({ _id: user._id, email: user.email }, { expiresIn: '15m' });
+      const token = this.jwtService.sign({ _id: user._id, email: user.email }, { expiresIn: '1h' });
       log('JWT token generated successfully');
 
       return { token: token, user: user.toObject() };
