@@ -9,7 +9,8 @@ export class OrdersService {
 
   async createOrder(userId: string, email: string, items: { productId: string; quantity: number }[], totalPrice: number, shippingAddress: string) {
     const newOrder = new this.orderModel({ userId, email, items, totalPrice, shippingAddress });
-    return newOrder.save();
+    await newOrder.save();
+    return newOrder.populate("items.productId");
   }
 
   async getAllOrders(userId: string) {

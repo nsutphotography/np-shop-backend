@@ -3,8 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Cart } from './schemas/cart.schema';
 import { Types } from 'mongoose';
-import {debug} from 'debug';
-const log = debug('app:cart-service');
+import log from "../debugging/debug"
 @Injectable()
 export class CartService {
     constructor(
@@ -55,7 +54,7 @@ export class CartService {
         }
     
         // Save the cart and return the updated cart
-        cart.save();
+        await cart.save();
         return this.cartModel.findOne({ userId }).populate('items.productId');
     }
     
@@ -69,7 +68,8 @@ export class CartService {
         // Remove item from cart
         cart.items = cart.items.filter((item) => item.productId.toString() !== productId);
 
-        return cart.save();
+        await cart.save();
+        return this.cartModel.findOne({ userId }).populate('items.productId');
     }
 
     async decreaseQuantity(userId: string, productId: string, quantity: number): Promise<Cart> {
@@ -100,8 +100,8 @@ export class CartService {
             cart.items[productIndex].quantity -= quantity;
         }
     
-        // Save the cart and return the updated cart
-        return cart.save();
+        await cart.save();
+        return this.cartModel.findOne({ userId }).populate('items.productId');
     }
     async clearCart(userId: string): Promise<Cart> {
         const cart = await this.cartModel.findOneAndUpdate(
