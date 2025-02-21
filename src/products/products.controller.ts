@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -13,6 +13,10 @@ export class ProductsController {
   @Get('get-all')
   findAll() {
     return this.productsService.findAll();
+  }
+  @Get('search')
+  searchProducts(@Query('q') query: string) {
+    return this.productsService.searchProducts(query);
   }
 
   @Get(':id')
