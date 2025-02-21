@@ -15,6 +15,18 @@ export class ProductsService {
   async findAll() {
     return this.productModel.find();
   }
+  async searchProducts(query: string): Promise<Product[]> {
+    const regex = new RegExp(query, 'i'); // Case-insensitive regex
+  
+    return this.productModel.find({
+      $or: [
+        { name: { $regex: regex } },
+        { description: { $regex: regex } }
+      ]
+    }).exec();
+  }
+  
+  
 
   async findOne(id: string) {
     return this.productModel.findById(id);
