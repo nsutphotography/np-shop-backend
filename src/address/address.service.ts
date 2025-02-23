@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Address } from './schemas/address.schema';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
-import debug from 'debug'; // Import debug
-const log = debug('app:address-service');
+import log from '../debugging/debug'
 @Injectable()
 export class AddressService {
   constructor(
@@ -16,7 +15,10 @@ export class AddressService {
     log("create address - userId:", userId, "userEmail:", userEmail, "createAddressDto:", createAddressDto);
 
     // Check if an address document exists for the user
+    log("add FUNCTION - Type of userId:", typeof userId);
+
     let addressDoc = await this.addressModel.findOne({ userId });
+    log("add address doc", addressDoc)
     if (!addressDoc) {
       // Create a new address document if none exists for the user
       addressDoc = new this.addressModel({
@@ -47,7 +49,7 @@ export class AddressService {
       isDefault,
       label: createAddressDto.label,
     } as any); // Use `as any` to bypass strict typing on `_id`
-  
+
     // Save the updated document
     await addressDoc.save();
 
@@ -78,11 +80,36 @@ export class AddressService {
     return address;
   }
 
-  async delete(id: string): Promise<void> {
-    const result = await this.addressModel.findByIdAndDelete(id);
-    if (!result) {
-      throw new NotFoundException('Address not found');
+  async delete(userId: string, addressId: string): Promise<Address | null> {
+    log("delete address - userId:", userId, "addressId:", addressId);
+
+    // // Find the user's address document
+    // log("DELETE FUNCTION - Received userId:", userId);
+    // log("DELETE FUNCTION - Type of userId:", typeof userId);
+    // const userObjectId = userId instanceof Types.ObjectId ? userId : new Types.ObjectId(userId);
+    // log("DELETE FUNCTION - Type of userId after conversion:", typeof userObjectId);
+
+
+
+    let addressDoc = await this.addressModel.findOne({ userId });
+    log("delete address",addressDoc)
+    if (!addressDoc) {
+      throw new Error("User address document not found");
     }
+
+    // Filter out the address to be deleted
+    addressDoc.addresses = addressDoc.addresses.filter(
+      (address) => address._id.toString() !== addressId
+    );
+
+    // If the deleted address was the default, set a new default if any addresses remain
+    if (!addressDoc.addresses.some((address) => address.isDefault) && addressDoc.addresses.length > 0) {
+      addressDoc.addresses[0].isDefault = true;
+    }
+
+    // Save the updated document
+    await addressDoc.save();
+    return addressDoc;
   }
   async updateDefault(userId: string, addressId: string): Promise<Address> {
     log("Updating default address for userId:", userId, "addressId:", addressId);

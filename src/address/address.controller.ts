@@ -1,12 +1,10 @@
-import { Controller, Post, Body, Param, Get, Patch, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Patch, UseGuards, Req, Delete } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { JwtAuthGuard } from 'src/utils/jwt.guard';
-import debug from 'debug'; // Import log
+import log from '../debugging/debug'
 
-// Create a log instance with 'log' as the namespace
-const log = debug('app:address-controller');
 
 @Controller('addresses')
 @UseGuards(JwtAuthGuard) // Protect all routes in this controller
@@ -17,7 +15,9 @@ export class AddressController {
   async create(@Body() createAddressDto: CreateAddressDto, @Req() req: any) {
     const userId = req.user.userId; // Extract userId from JWT payload
     const userEmail = req.user.email; // Extract userId from JWT payload
-    log('Creating address for user ID: %s', userId); // Log user ID during address creation
+    log("ADD FUNCTION - req.user:", req.user);
+log("ADD FUNCTION - Type of userId:", typeof req.user.userId);
+
     log("add address - address data", createAddressDto)
     return this.addressService.add(userId, userEmail, { ...createAddressDto });
   }
@@ -61,10 +61,12 @@ export class AddressController {
     }
   }
   
-  // @Delete(':id')
-  // async delete(@Param('id') id: string, @Req() req: any) {
-  //   const userId = req.user.userId; // Ensure the user is authorized to delete
-  //   log('Deleting address with ID: %s for user ID: %s', id, userId); // Log user ID and address ID during delete
-  //   return this.addressService.delete(id, userId);
-  // }
+  @Delete('delete/:id')
+  async delete(@Param('id') id: string, @Req() req: any) {
+    const userId = req.user.userId; // Extract userId from JWT payload
+    log("DELETE FUNCTION - req.user:", req.user);
+log("DELETE FUNCTION - Type of userId:", typeof req.user.userId);
+
+    return this.addressService.delete( userId,id);
+  }
 }
